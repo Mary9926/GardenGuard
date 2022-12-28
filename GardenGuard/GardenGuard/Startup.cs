@@ -23,8 +23,3 @@ internal class Startup : FunctionsStartup
             .Build();
     }
 }
-
-public class IoTHubConfig
-{
-    public string ConnectionString { get; set; }
-}
