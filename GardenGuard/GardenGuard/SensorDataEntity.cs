@@ -6,8 +6,8 @@ namespace GardenGuard;
 
 public class SensorDataEntity : ITableEntity
 {
-    public float Temperature { get; private set; }
-    public float Humidity { get; private set; }
+    public float Temperature { get; set; }
+    public float Humidity { get; set; }
     public string PartitionKey { get; set; }
     public string RowKey { get; set; }
     public DateTimeOffset? Timestamp { get; set; }
@@ -24,4 +24,10 @@ public class SensorDataEntity : ITableEntity
     public SensorDataEntity()
     {
     }
+
+    public SensorData GetSensorsData() => new SensorData()
+    {
+        Temperature = Temperature,
+        Humidity = Humidity
+    };
 }
