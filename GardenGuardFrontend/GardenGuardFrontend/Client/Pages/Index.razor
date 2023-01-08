@@ -1,0 +1,36 @@
+﻿@page "/"
+@implements IDisposable
+@inject HttpClient client
+
+<PageTitle>Index</PageTitle>
+
+<h1>@(Sensor is null ? "..." : Sensor.Temperature.ToString())</h1>
+
+@code
+{
+    private readonly string DeviceId = "ESP_001";
+
+    public SensorData? Sensor { get; set; }
+    private Timer? _timer = null;
+
+    protected override void OnInitialized()
+    {
+        _timer = new Timer(DoWork, null, TimeSpan.Zero, TimeSpan.FromSeconds(60));
+    }
+
+    private void DoWork(object? state)
+    {
+        _ = GetSensors();
+    }
+
+    private async Task GetSensors()
+    {
+        Sensor = await client.GetFromJsonAsync<SensorData>($"/api/sensor/{DeviceId}");
+        StateHasChanged();
+    }
+
+    public void Dispose()
+    {
+        _timer?.Dispose();
+    }
+}
