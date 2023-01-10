@@ -5,40 +5,73 @@
 <PageTitle>Index</PageTitle>
 
 <div>
+    <MudGrid Justify="Justify.Center" Class="m-0 p-5 w-100 background">
+        <MudItem xs="6" md="4">
+            <div class="card">
+                <MudIcon Icon="@Icons.Material.Filled.DeviceThermostat"></MudIcon>
+                <MudText Typo="Typo.h6">Temperature</MudText>
+                <MudText Typo="Typo.h5"><b>@(Sensor is null ? "..." : Sensor.Temperature.ToString()) °C</b></MudText>
+            </div>
+        </MudItem>
+        <MudItem xs="6" md="4">
+            <div class="card">
+                <MudIcon Icon="@Icons.Material.Filled.WaterDrop"></MudIcon>
+                <MudText Typo="Typo.h6">Humididty</MudText>
+                <MudText Typo="Typo.h5"><b>@(Sensor is null ? "..." : Sensor.Humidity.ToString()) %</b></MudText>
+            </div>
+        </MudItem>
+        @if (showTemperatureAlert)
+        {
+            <MudItem xs="12" md="8">
+                    <MudAlert Severity="Severity.Error" ContentAlignment="HorizontalAlignment.Center" ShowCloseIcon="true"
+                          CloseIconClicked="(() => CloseMe(true))">Temperature is too hight please adjust it!</MudAlert>
+            </MudItem>
+        }
+        @if (showHumididtyAlert)
+        {
+            <MudItem xs="12" md="8">
+                    <MudAlert Severity="Severity.Error" ContentAlignment="HorizontalAlignment.Center" ShowCloseIcon="true"
+                          CloseIconClicked="(() => CloseMe(false))">Humidity is too hight please adjust it!</MudAlert>
+            </MudItem>
+        }
+    </MudGrid>
+</div>
+
+@*<div>
 
     <MudItem xs="12">
-        <div style="display: flex; justify-content: center;">
-            <h1> Temperature: @(Sensor is null ? "..." : Sensor.Temperature.ToString()) °C</h1>
-        </div>
+    <div style="display: flex; justify-content: center;">
+    <h1> Temperature: @(Sensor is null ? "..." : Sensor.Temperature.ToString()) °C</h1>
+    </div>
     </MudItem>
 
     @if (showTemperatureAlert)
     {
-        <MudItem xs="12">
-            <div>
-                <MudAlert Severity="Severity.Error" ContentAlignment="HorizontalAlignment.Center" ShowCloseIcon="true"
-                      CloseIconClicked="(() => CloseMe(true))">Temperature is too hight please adjust it!</MudAlert>
-            </div>
-        </MudItem>
+    <MudItem xs="12">
+    <div>
+    <MudAlert Severity="Severity.Error" ContentAlignment="HorizontalAlignment.Center" ShowCloseIcon="true"
+    CloseIconClicked="(() => CloseMe(true))">Temperature is too hight please adjust it!</MudAlert>
+    </div>
+    </MudItem>
     }
 
     <MudItem xs="12">
-        <div style="display: flex; justify-content: center;">
-            <h1> Humididty: @(Sensor is null ? "..." : Sensor.Humidity.ToString()) %</h1>
-        </div>
+    <div style="display: flex; justify-content: center;">
+    <h1> Humididty: @(Sensor is null ? "..." : Sensor.Humidity.ToString()) %</h1>
+    </div>
     </MudItem>
 
     @if (showHumididtyAlert)
     {
-        <MudItem xs="12">
-            <div>
-                <MudAlert Severity="Severity.Error" ContentAlignment="HorizontalAlignment.Center" ShowCloseIcon="true"
-                      CloseIconClicked="(() => CloseMe(false))">Humidity is too hight please adjust it!</MudAlert>
-            </div>
-        </MudItem>
+    <MudItem xs="12">
+    <div>
+    <MudAlert Severity="Severity.Error" ContentAlignment="HorizontalAlignment.Center" ShowCloseIcon="true"
+    CloseIconClicked="(() => CloseMe(false))">Humidity is too hight please adjust it!</MudAlert>
+    </div>
+    </MudItem>
     }
 
-</div>
+    </div>*@
 
 @code
 {
