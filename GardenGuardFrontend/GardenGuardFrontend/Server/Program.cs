@@ -1,7 +1,10 @@
 using GardenGuardFrontend.Server;
+using Microsoft.AspNetCore.Hosting.StaticWebAssets;
 using System.Reflection;
 
 var builder = WebApplication.CreateBuilder(args);
+
+StaticWebAssetsLoader.UseStaticWebAssets(builder.Environment, builder.Configuration);
 
 builder.Configuration
     .AddEnvironmentVariables()

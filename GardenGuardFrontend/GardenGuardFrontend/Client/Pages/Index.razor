@@ -4,7 +4,41 @@
 
 <PageTitle>Index</PageTitle>
 
-<h1>@(Sensor is null ? "..." : Sensor.Temperature.ToString())</h1>
+<div>
+
+    <MudItem xs="12">
+        <div style="display: flex; justify-content: center;">
+            <h1> Temperature: @(Sensor is null ? "..." : Sensor.Temperature.ToString()) °C</h1>
+        </div>
+    </MudItem>
+
+    @if (showTemperatureAlert)
+    {
+        <MudItem xs="12">
+            <div>
+                <MudAlert Severity="Severity.Error" ContentAlignment="HorizontalAlignment.Center" ShowCloseIcon="true"
+                      CloseIconClicked="(() => CloseMe(true))">Temperature is too hight please adjust it!</MudAlert>
+            </div>
+        </MudItem>
+    }
+
+    <MudItem xs="12">
+        <div style="display: flex; justify-content: center;">
+            <h1> Humididty: @(Sensor is null ? "..." : Sensor.Humidity.ToString()) %</h1>
+        </div>
+    </MudItem>
+
+    @if (showHumididtyAlert)
+    {
+        <MudItem xs="12">
+            <div>
+                <MudAlert Severity="Severity.Error" ContentAlignment="HorizontalAlignment.Center" ShowCloseIcon="true"
+                      CloseIconClicked="(() => CloseMe(false))">Humidity is too hight please adjust it!</MudAlert>
+            </div>
+        </MudItem>
+    }
+
+</div>
 
 @code
 {
@@ -12,6 +46,13 @@
 
     public SensorData? Sensor { get; set; }
     private Timer? _timer = null;
+
+    private bool showTemperatureAlert = false;
+    private bool showHumididtyAlert = false;
+
+    private int temperature = 10;
+    private int humididty = 10;
+
 
     protected override void OnInitialized()
     {
@@ -26,6 +67,7 @@
     private async Task GetSensors()
     {
         Sensor = await client.GetFromJsonAsync<SensorData>($"/api/sensor/{DeviceId}");
+        ShowAlerts();
         StateHasChanged();
     }
 
@@ -33,4 +75,34 @@
     {
         _timer?.Dispose();
     }
+
+    private void CloseMe(bool value)
+    {
+        if (value)
+        {
+            showTemperatureAlert = false;
+        }
+        else
+        {
+            showHumididtyAlert = false;
+        }
+    }
+
+    private void ShowAlerts()
+    {
+        if (Sensor is not null && Sensor.Temperature > temperature)
+        {
+            showTemperatureAlert = true;
+        }
+        if (Sensor is not null && Sensor.Humidity > humididty)
+        {
+            showHumididtyAlert = true;
+        }
+        else
+        {
+            showTemperatureAlert = false;
+            showHumididtyAlert = false;
+        }
+    }
+
 }
