@@ -4,74 +4,48 @@
 
 <PageTitle>Index</PageTitle>
 
-<div>
-    <MudGrid Justify="Justify.Center" Class="m-0 p-5 w-100 background">
+<div class="background"></div>
+<div class="content">
+    <MudGrid Justify="Justify.Center" Class="m-0 p-5 w-100">
+
+        <MudItem xs="0" md="2" Class="p-0"></MudItem>
+        <MudItem xs="12" md="8">
+            <MudText Typo="Typo.h5" Class="text-white">Welcome</MudText>
+            <MudText Typo="Typo.h6" Class="text-white">Check your sensors' results</MudText>
+        </MudItem>
+        <MudItem xs="0" md="2" Class="p-0"></MudItem>
+
         <MudItem xs="6" md="4">
             <div class="card">
-                <MudIcon Icon="@Icons.Material.Filled.DeviceThermostat"></MudIcon>
+                <MudIcon Icon="@Icons.Material.Filled.DeviceThermostat" Class="pb-2" Style="fill: #48A25F !important; font-size: 2.6rem;"></MudIcon>
                 <MudText Typo="Typo.h6">Temperature</MudText>
                 <MudText Typo="Typo.h5"><b>@(Sensor is null ? "..." : Sensor.Temperature.ToString()) °C</b></MudText>
             </div>
         </MudItem>
         <MudItem xs="6" md="4">
             <div class="card">
-                <MudIcon Icon="@Icons.Material.Filled.WaterDrop"></MudIcon>
+                <MudIcon Icon="@Icons.Material.Filled.WaterDrop" Class="pb-2" Style="fill: #48A25F !important; font-size: 2.6rem;"></MudIcon>
                 <MudText Typo="Typo.h6">Humididty</MudText>
                 <MudText Typo="Typo.h5"><b>@(Sensor is null ? "..." : Sensor.Humidity.ToString()) %</b></MudText>
             </div>
         </MudItem>
+
         @if (showTemperatureAlert)
         {
             <MudItem xs="12" md="8">
-                    <MudAlert Severity="Severity.Error" ContentAlignment="HorizontalAlignment.Center" ShowCloseIcon="true"
-                          CloseIconClicked="(() => CloseMe(true))">Temperature is too hight please adjust it!</MudAlert>
+                <MudAlert Severity="Severity.Error" ContentAlignment="HorizontalAlignment.Center" ShowCloseIcon="true"
+                      CloseIconClicked="(() => CloseMe(true))">Temperature is too hight please adjust it!</MudAlert>
             </MudItem>
         }
         @if (showHumididtyAlert)
         {
             <MudItem xs="12" md="8">
-                    <MudAlert Severity="Severity.Error" ContentAlignment="HorizontalAlignment.Center" ShowCloseIcon="true"
-                          CloseIconClicked="(() => CloseMe(false))">Humidity is too hight please adjust it!</MudAlert>
+                <MudAlert Severity="Severity.Error" ContentAlignment="HorizontalAlignment.Center" ShowCloseIcon="true"
+                      CloseIconClicked="(() => CloseMe(false))">Humidity is too hight please adjust it!</MudAlert>
             </MudItem>
         }
     </MudGrid>
 </div>
-
-@*<div>
-
-    <MudItem xs="12">
-    <div style="display: flex; justify-content: center;">
-    <h1> Temperature: @(Sensor is null ? "..." : Sensor.Temperature.ToString()) °C</h1>
-    </div>
-    </MudItem>
-
-    @if (showTemperatureAlert)
-    {
-    <MudItem xs="12">
-    <div>
-    <MudAlert Severity="Severity.Error" ContentAlignment="HorizontalAlignment.Center" ShowCloseIcon="true"
-    CloseIconClicked="(() => CloseMe(true))">Temperature is too hight please adjust it!</MudAlert>
-    </div>
-    </MudItem>
-    }
-
-    <MudItem xs="12">
-    <div style="display: flex; justify-content: center;">
-    <h1> Humididty: @(Sensor is null ? "..." : Sensor.Humidity.ToString()) %</h1>
-    </div>
-    </MudItem>
-
-    @if (showHumididtyAlert)
-    {
-    <MudItem xs="12">
-    <div>
-    <MudAlert Severity="Severity.Error" ContentAlignment="HorizontalAlignment.Center" ShowCloseIcon="true"
-    CloseIconClicked="(() => CloseMe(false))">Humidity is too hight please adjust it!</MudAlert>
-    </div>
-    </MudItem>
-    }
-
-    </div>*@
 
 @code
 {
@@ -83,9 +57,8 @@
     private bool showTemperatureAlert = false;
     private bool showHumididtyAlert = false;
 
-    private int temperature = 10;
-    private int humididty = 10;
-
+    private int maxTemperature = 25;
+    private int maxHumididty = 80;
 
     protected override void OnInitialized()
     {
@@ -94,10 +67,10 @@
 
     private void DoWork(object? state)
     {
-        _ = GetSensors();
+        _ = RefreshSensorsData();
     }
 
-    private async Task GetSensors()
+    private async Task RefreshSensorsData()
     {
         Sensor = await client.GetFromJsonAsync<SensorData>($"/api/sensor/{DeviceId}");
         ShowAlerts();
@@ -112,30 +85,15 @@
     private void CloseMe(bool value)
     {
         if (value)
-        {
             showTemperatureAlert = false;
-        }
         else
-        {
             showHumididtyAlert = false;
-        }
     }
 
     private void ShowAlerts()
     {
-        if (Sensor is not null && Sensor.Temperature > temperature)
-        {
-            showTemperatureAlert = true;
-        }
-        if (Sensor is not null && Sensor.Humidity > humididty)
-        {
-            showHumididtyAlert = true;
-        }
-        else
-        {
-            showTemperatureAlert = false;
-            showHumididtyAlert = false;
-        }
+        showTemperatureAlert = Sensor is not null && Sensor.Temperature > maxTemperature;
+        showHumididtyAlert = Sensor is not null && Sensor.Humidity > maxHumididty;
     }
 
 }
